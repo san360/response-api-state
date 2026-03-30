@@ -22,32 +22,32 @@ resource rg 'Microsoft.Resources/resourceGroups@2024-03-01' = {
   tags: tags
 }
 
-// Deploy three Azure OpenAI (Foundry) instances
-module openai1 'modules/openai.bicep' = {
+// Deploy three Azure AI Foundry instances (each with AI Services + Hub + Project)
+module foundry1 'modules/foundry-instance.bicep' = {
   scope: rg
-  name: 'openai-instance-1'
+  name: 'foundry-instance-1'
   params: {
-    name: 'oai-stateless-1-${uniqueSuffix}'
+    name: 'fnd1-${uniqueSuffix}'
     location: location
     tags: union(tags, { instance: '1' })
   }
 }
 
-module openai2 'modules/openai.bicep' = {
+module foundry2 'modules/foundry-instance.bicep' = {
   scope: rg
-  name: 'openai-instance-2'
+  name: 'foundry-instance-2'
   params: {
-    name: 'oai-stateless-2-${uniqueSuffix}'
+    name: 'fnd2-${uniqueSuffix}'
     location: location
     tags: union(tags, { instance: '2' })
   }
 }
 
-module openai3 'modules/openai.bicep' = {
+module foundry3 'modules/foundry-instance.bicep' = {
   scope: rg
-  name: 'openai-instance-3'
+  name: 'foundry-instance-3'
   params: {
-    name: 'oai-stateless-3-${uniqueSuffix}'
+    name: 'fnd3-${uniqueSuffix}'
     location: location
     tags: union(tags, { instance: '3' })
   }
@@ -56,11 +56,17 @@ module openai3 'modules/openai.bicep' = {
 // Outputs
 output resourceGroupName string = rg.name
 
-output instance1Endpoint string = openai1.outputs.endpoint
-output instance1Name string = openai1.outputs.resourceName
+output instance1Endpoint string = foundry1.outputs.endpoint
+output instance1AiServicesName string = foundry1.outputs.aiServicesName
+output instance1HubName string = foundry1.outputs.hubName
+output instance1ProjectName string = foundry1.outputs.projectName
 
-output instance2Endpoint string = openai2.outputs.endpoint
-output instance2Name string = openai2.outputs.resourceName
+output instance2Endpoint string = foundry2.outputs.endpoint
+output instance2AiServicesName string = foundry2.outputs.aiServicesName
+output instance2HubName string = foundry2.outputs.hubName
+output instance2ProjectName string = foundry2.outputs.projectName
 
-output instance3Endpoint string = openai3.outputs.endpoint
-output instance3Name string = openai3.outputs.resourceName
+output instance3Endpoint string = foundry3.outputs.endpoint
+output instance3AiServicesName string = foundry3.outputs.aiServicesName
+output instance3HubName string = foundry3.outputs.hubName
+output instance3ProjectName string = foundry3.outputs.projectName

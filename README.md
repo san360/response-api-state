@@ -1,31 +1,45 @@
-# Azure OpenAI Response API — Stateless Cross-Instance Test
+# Azure OpenAI Response API — Stateless Cross-Instance Test (Azure AI Foundry)
 
 ## Overview
 
-This project tests whether the **Azure OpenAI Response API** state (i.e. `response_id` and `previous_response_id`) is portable across **different Azure OpenAI (Foundry) instances**. It answers the question:
+This project tests whether the **Azure OpenAI Response API** state (i.e. `response_id` and `previous_response_id`) is portable across **different Azure AI Foundry instances**. It answers the question:
 
 > **If I create a response on Foundry Instance A, can I retrieve or chain that response from Foundry Instance B or C?**
 
-Three Azure OpenAI resources are deployed in **Sweden Central**, each with a **GPT-4.1-mini** model. The Jupyter notebook runs a comprehensive test matrix covering both synchronous and background (`background=True`) modes.
+Three **Azure AI Foundry** setups are deployed in **Sweden Central**, each consisting of:
+- **AI Services account** (kind: `AIServices`) with a **GPT-4.1-mini** model deployment
+- **AI Foundry Hub** (linked to Storage Account + Key Vault)
+- **AI Foundry Project** (linked to the Hub)
+- **AI Services connection** on the Hub
+
+The Jupyter notebook runs a comprehensive test matrix covering both synchronous and background (`background=True`) modes.
 
 ## Architecture
 
 ```
-┌──────────────────────┐     ┌──────────────────────┐     ┌──────────────────────┐
-│  Azure OpenAI        │     │  Azure OpenAI        │     │  Azure OpenAI        │
-│  Instance 1          │     │  Instance 2          │     │  Instance 3          │
-│  (Sweden Central)    │     │  (Sweden Central)    │     │  (Sweden Central)    │
-│                      │     │                      │     │                      │
-│  gpt-4.1-mini        │     │  gpt-4.1-mini        │     │  gpt-4.1-mini        │
-└──────────┬───────────┘     └──────────┬───────────┘     └──────────┬───────────┘
-           │                            │                            │
-           └────────────────┬───────────┘────────────────────────────┘
-                            │
-                   ┌────────▼────────┐
-                   │  Jupyter        │
-                   │  Notebook       │
-                   │  (Test Runner)  │
-                   └─────────────────┘
+┌──────────────────────────────┐  ┌──────────────────────────────┐  ┌──────────────────────────────┐
+│  Azure AI Foundry 1          │  │  Azure AI Foundry 2          │  │  Azure AI Foundry 3          │
+│  (Sweden Central)            │  │  (Sweden Central)            │  │  (Sweden Central)            │
+│                              │  │                              │  │                              │
+│  ┌────────────────────────┐  │  │  ┌────────────────────────┐  │  │  ┌────────────────────────┐  │
+│  │ AI Services (AIServices) │  │  │  │ AI Services (AIServices) │  │  │  │ AI Services (AIServices) │  │
+│  │ gpt-4.1-mini             │  │  │  │ gpt-4.1-mini             │  │  │  │ gpt-4.1-mini             │  │
+│  └────────────────────────┘  │  │  └────────────────────────┘  │  │  └────────────────────────┘  │
+│  ┌────────────────────────┐  │  │  ┌────────────────────────┐  │  │  ┌────────────────────────┐  │
+│  │ Foundry Hub              │  │  │  │ Foundry Hub              │  │  │  │ Foundry Hub              │  │
+│  │   └─ Foundry Project      │  │  │  │   └─ Foundry Project      │  │  │  │   └─ Foundry Project      │  │
+│  │   └─ AI Svc Connection   │  │  │  │   └─ AI Svc Connection   │  │  │  │   └─ AI Svc Connection   │  │
+│  └────────────────────────┘  │  │  └────────────────────────┘  │  │  └────────────────────────┘  │
+│  Storage + Key Vault        │  │  Storage + Key Vault        │  │  Storage + Key Vault        │
+└──────────────┬───────────────┘  └──────────────┬───────────────┘  └──────────────┬───────────────┘
+               │                              │                              │
+               └──────────────┬───────────────┘───────────────┘
+                              │
+                     ┌────────▼────────┐
+                     │  Jupyter        │
+                     │  Notebook       │
+                     │  (Test Runner)  │
+                     └─────────────────┘
 ```
 
 ## Test Matrix
@@ -46,7 +60,10 @@ Three Azure OpenAI resources are deployed in **Sweden Central**, each with a **G
 ## Prerequisites
 
 - **Azure CLI** installed and authenticated (`az login`)
-- **Azure subscription** with permissions to create Cognitive Services resources
+- **Azure subscription** with Owner or Contributor permissions to create:
+  - Cognitive Services (AI Services) resources
+  - Machine Learning Services (Foundry Hub/Project) resources  
+  - Storage Accounts and Key Vaults
 - **Python 3.10+**
 - Sufficient quota for GPT-4.1-mini in Sweden Central
 
@@ -55,17 +72,18 @@ Three Azure OpenAI resources are deployed in **Sweden Central**, each with a **G
 ```
 response-api-state/
 ├── infra/
-│   ├── main.bicep                  # Main Bicep template (subscription-scoped)
-│   ├── main.parameters.json        # Deployment parameters
+│   ├── main.bicep                      # Main Bicep template (subscription-scoped)
+│   ├── main.parameters.json            # Deployment parameters
 │   └── modules/
-│       └── openai.bicep            # Azure OpenAI resource module
-├── test_response_api_stateless.ipynb  # Jupyter notebook with all tests
-├── deploy.sh                       # Deployment script
-├── env.example                     # Environment variable template
-├── .env                            # Actual environment variables (git-ignored)
+│       └── foundry-instance.bicep       # Azure AI Foundry instance module
+│                                        # (AI Services + Hub + Project + Storage + KV)
+├── test_response_api_stateless.ipynb    # Jupyter notebook with all tests
+├── deploy.sh                           # Deployment script
+├── env.example                         # Environment variable template
+├── .env                                # Actual environment variables (git-ignored)
 ├── .gitignore
 ├── requirements.txt
-└── README.md                       # This file
+└── README.md                           # This file
 ```
 
 ## Deployment
@@ -102,10 +120,10 @@ After deployment, the script outputs the endpoint names. Retrieve the API keys:
 ```bash
 RESOURCE_GROUP="rg-response-api-stateless-test"
 
-# Get resource names from deployment output
-INSTANCE1_NAME=$(az deployment sub show --name main --query "properties.outputs.instance1Name.value" -o tsv)
-INSTANCE2_NAME=$(az deployment sub show --name main --query "properties.outputs.instance2Name.value" -o tsv)
-INSTANCE3_NAME=$(az deployment sub show --name main --query "properties.outputs.instance3Name.value" -o tsv)
+# Get AI Services names from deployment output
+INSTANCE1_NAME=$(az deployment sub show --name response-api-stateless --query "properties.outputs.instance1AiServicesName.value" -o tsv)
+INSTANCE2_NAME=$(az deployment sub show --name response-api-stateless --query "properties.outputs.instance2AiServicesName.value" -o tsv)
+INSTANCE3_NAME=$(az deployment sub show --name response-api-stateless --query "properties.outputs.instance3AiServicesName.value" -o tsv)
 
 # Retrieve API keys
 KEY1=$(az cognitiveservices account keys list -n "$INSTANCE1_NAME" -g "$RESOURCE_GROUP" --query "key1" -o tsv)
@@ -174,14 +192,28 @@ response = client.responses.retrieve("resp_abc123...")
 
 ## Expected Results
 
-Based on Azure's architecture, each Azure OpenAI resource maintains **its own response storage**. Therefore:
+Based on Azure's architecture, each Azure AI Foundry instance maintains **its own response storage** via its underlying AI Services account. Therefore:
 
 - **Test 1** (same-instance baseline) → **PASS**
 - **Tests 2–3** (cross-instance retrieve/chain) → **Expected to FAIL** (response not found on different resource)
 - **Test 4** (background baseline) → **PASS**
 - **Tests 5–6** (background cross-instance) → **Expected to FAIL** (same reason)
 
-If all tests pass, it would indicate that Azure shares response state across resources in the same region — which would be a significant finding.
+If all tests pass, it would indicate that Azure shares response state across AI Services accounts in the same region — which would be a significant finding.
+
+## Resources Deployed Per Instance
+
+Each of the 3 Foundry instances creates:
+
+| Resource | Type | Purpose |
+|----------|------|--------|
+| AI Services | `Microsoft.CognitiveServices/accounts` (kind: `AIServices`) | Hosts the GPT-4.1-mini model deployment; provides the OpenAI API endpoint |
+| Model Deployment | `Microsoft.CognitiveServices/accounts/deployments` | GPT-4.1-mini with GlobalStandard SKU |
+| Foundry Hub | `Microsoft.MachineLearningServices/workspaces` (kind: `hub`) | Organizational container for AI projects |
+| Foundry Project | `Microsoft.MachineLearningServices/workspaces` (kind: `project`) | Scoped workspace within the hub |
+| AI Services Connection | `Microsoft.MachineLearningServices/workspaces/connections` | Links the Hub to the AI Services account |
+| Storage Account | `Microsoft.Storage/storageAccounts` | Required dependency for the Hub |
+| Key Vault | `Microsoft.KeyVault/vaults` | Required dependency for the Hub |
 
 ## Cleanup
 
@@ -194,5 +226,6 @@ az group delete --name rg-response-api-stateless-test --yes --no-wait
 ## References
 
 - [Azure OpenAI Responses API Documentation](https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/responses)
+- [Azure AI Foundry Hub — Bicep Template](https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/create-azure-ai-hub-template)
 - [Azure OpenAI REST API Reference](https://learn.microsoft.com/en-us/azure/foundry/openai/latest)
 - [Bicep Documentation](https://learn.microsoft.com/en-us/azure/azure-resource-manager/bicep/)
