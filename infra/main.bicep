@@ -56,17 +56,17 @@ module foundry3 'modules/foundry-instance.bicep' = {
 // Outputs
 output resourceGroupName string = rg.name
 
-output instance1Endpoint string = foundry1.outputs.endpoint
+output instance1Endpoint string = foundry1.outputs.openaiEndpoint
 output instance1AiServicesName string = foundry1.outputs.aiServicesName
 output instance1HubName string = foundry1.outputs.hubName
 output instance1ProjectName string = foundry1.outputs.projectName
 
-output instance2Endpoint string = foundry2.outputs.endpoint
+output instance2Endpoint string = foundry2.outputs.openaiEndpoint
 output instance2AiServicesName string = foundry2.outputs.aiServicesName
 output instance2HubName string = foundry2.outputs.hubName
 output instance2ProjectName string = foundry2.outputs.projectName
 
-output instance3Endpoint string = foundry3.outputs.endpoint
+output instance3Endpoint string = foundry3.outputs.openaiEndpoint
 output instance3AiServicesName string = foundry3.outputs.aiServicesName
 output instance3HubName string = foundry3.outputs.hubName
 output instance3ProjectName string = foundry3.outputs.projectName

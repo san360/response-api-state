@@ -166,11 +166,17 @@ resource aiProject 'Microsoft.MachineLearningServices/workspaces@2024-10-01' = {
 // ──────────────────────────────────────────────────────────────
 // Outputs
 // ──────────────────────────────────────────────────────────────
-@description('The endpoint URL of the AI Services resource (used for OpenAI API calls)')
-output endpoint string = aiServices.properties.endpoint
+@description('The OpenAI-specific endpoint URL (used for Response API base_url)')
+output openaiEndpoint string = 'https://${aiServices.properties.customSubDomainName}.openai.azure.com/'
+
+@description('The AI Services endpoint URL (general cognitive services endpoint)')
+output aiServicesEndpoint string = aiServices.properties.endpoint
 
 @description('The AI Services resource name (used to retrieve API keys)')
 output aiServicesName string = aiServices.name
+
+@description('The custom subdomain name of the AI Services account')
+output customSubDomainName string = aiServices.properties.customSubDomainName
 
 @description('The Foundry Hub name')
 output hubName string = aiHub.name

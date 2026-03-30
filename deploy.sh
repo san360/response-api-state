@@ -46,6 +46,9 @@ INSTANCE1_ENDPOINT=$(az deployment sub show --name "$DEPLOYMENT_NAME" --query "p
 INSTANCE2_ENDPOINT=$(az deployment sub show --name "$DEPLOYMENT_NAME" --query "properties.outputs.instance2Endpoint.value" -o tsv)
 INSTANCE3_ENDPOINT=$(az deployment sub show --name "$DEPLOYMENT_NAME" --query "properties.outputs.instance3Endpoint.value" -o tsv)
 
+# NOTE: These endpoints are the OpenAI-specific endpoints (*.openai.azure.com)
+# required by the Response API. NOT the general *.cognitiveservices.azure.com.
+
 INSTANCE1_HUB=$(az deployment sub show --name "$DEPLOYMENT_NAME" --query "properties.outputs.instance1HubName.value" -o tsv)
 INSTANCE2_HUB=$(az deployment sub show --name "$DEPLOYMENT_NAME" --query "properties.outputs.instance2HubName.value" -o tsv)
 INSTANCE3_HUB=$(az deployment sub show --name "$DEPLOYMENT_NAME" --query "properties.outputs.instance3HubName.value" -o tsv)

@@ -190,6 +190,18 @@ while response.status in ("queued", "in_progress"):
 response = client.responses.retrieve("resp_abc123...")
 ```
 
+## Important: Endpoint Clarification
+
+The **Response API** requires the **OpenAI-specific endpoint** of the AI Services account:
+
+```
+https://{customSubDomainName}.openai.azure.com/openai/v1/
+```
+
+This is **NOT** the Foundry project endpoint and **NOT** the general Cognitive Services endpoint (`*.cognitiveservices.azure.com`). Even though the infrastructure uses Azure AI Foundry (Hub + Project), the actual model inference and Response API calls go through the OpenAI endpoint of the underlying AI Services account.
+
+The Foundry Hub and Project are **organizational/governance constructs** — they manage access, connections, and project isolation. The model deployment lives on the AI Services account, and the Response API uses that account's OpenAI endpoint directly.
+
 ## Expected Results
 
 Based on Azure's architecture, each Azure AI Foundry instance maintains **its own response storage** via its underlying AI Services account. Therefore:
@@ -207,7 +219,7 @@ Each of the 3 Foundry instances creates:
 
 | Resource | Type | Purpose |
 |----------|------|--------|
-| AI Services | `Microsoft.CognitiveServices/accounts` (kind: `AIServices`) | Hosts the GPT-4.1-mini model deployment; provides the OpenAI API endpoint |
+| AI Services | `Microsoft.CognitiveServices/accounts` (kind: `AIServices`) | Hosts the GPT-4.1-mini model deployment; provides the OpenAI endpoint (`*.openai.azure.com`) |
 | Model Deployment | `Microsoft.CognitiveServices/accounts/deployments` | GPT-4.1-mini with GlobalStandard SKU |
 | Foundry Hub | `Microsoft.MachineLearningServices/workspaces` (kind: `hub`) | Organizational container for AI projects |
 | Foundry Project | `Microsoft.MachineLearningServices/workspaces` (kind: `project`) | Scoped workspace within the hub |
