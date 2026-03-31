@@ -1,46 +1,44 @@
-# Azure OpenAI Response API — Stateless Cross-Instance Test (Azure AI Foundry)
+# Azure OpenAI Response API — Stateless Cross-Instance Test (Azure AI Services)
 
 ## Overview
 
-This project tests whether the **Azure OpenAI Response API** state (i.e. `response_id` and `previous_response_id`) is portable across **different Azure AI Foundry instances**. It answers the question:
+This project tests whether the **Azure OpenAI Response API** state (i.e. `response_id` and `previous_response_id`) is portable across **different Azure AI Services instances**. It answers the question:
 
-> **If I create a response on Foundry Instance A, can I retrieve or chain that response from Foundry Instance B or C?**
+> **If I create a response on Instance A, can I retrieve or chain that response from Instance B or C?**
 
-Three **Azure AI Foundry** setups are deployed in **Sweden Central**, each consisting of:
-- **AI Services account** (kind: `AIServices`) with a **GPT-4.1-mini** model deployment
-- **AI Foundry Hub** (linked to Storage Account + Key Vault)
-- **AI Foundry Project** (linked to the Hub)
-- **AI Services connection** on the Hub
+Three **Azure AI Services** accounts (kind: `AIServices`) are deployed in **Sweden Central**, each with a **GPT-4.1-mini** model deployment.
 
 The Jupyter notebook runs a comprehensive test matrix covering both synchronous and background (`background=True`) modes.
 
 ## Architecture
 
 ```
-┌──────────────────────────────┐  ┌──────────────────────────────┐  ┌──────────────────────────────┐
-│  Azure AI Foundry 1          │  │  Azure AI Foundry 2          │  │  Azure AI Foundry 3          │
-│  (Sweden Central)            │  │  (Sweden Central)            │  │  (Sweden Central)            │
-│                              │  │                              │  │                              │
-│  ┌────────────────────────┐  │  │  ┌────────────────────────┐  │  │  ┌────────────────────────┐  │
-│  │ AI Services (AIServices) │  │  │  │ AI Services (AIServices) │  │  │  │ AI Services (AIServices) │  │
-│  │ gpt-4.1-mini             │  │  │  │ gpt-4.1-mini             │  │  │  │ gpt-4.1-mini             │  │
-│  └────────────────────────┘  │  │  └────────────────────────┘  │  │  └────────────────────────┘  │
-│  ┌────────────────────────┐  │  │  ┌────────────────────────┐  │  │  ┌────────────────────────┐  │
-│  │ Foundry Hub              │  │  │  │ Foundry Hub              │  │  │  │ Foundry Hub              │  │
-│  │   └─ Foundry Project      │  │  │  │   └─ Foundry Project      │  │  │  │   └─ Foundry Project      │  │
-│  │   └─ AI Svc Connection   │  │  │  │   └─ AI Svc Connection   │  │  │  │   └─ AI Svc Connection   │  │
-│  └────────────────────────┘  │  │  └────────────────────────┘  │  │  └────────────────────────┘  │
-│  Storage + Key Vault        │  │  Storage + Key Vault        │  │  Storage + Key Vault        │
-└──────────────┬───────────────┘  └──────────────┬───────────────┘  └──────────────┬───────────────┘
-               │                              │                              │
-               └──────────────┬───────────────┘───────────────┘
-                              │
-                     ┌────────▼────────┐
-                     │  Jupyter        │
-                     │  Notebook       │
-                     │  (Test Runner)  │
-                     └─────────────────┘
+┌──────────────────────────┐  ┌──────────────────────────┐  ┌──────────────────────────┐
+│  AI Services Instance 1  │  │  AI Services Instance 2  │  │  AI Services Instance 3  │
+│  (Sweden Central)        │  │  (Sweden Central)        │  │  (Sweden Central)        │
+│                          │  │                          │  │                          │
+│  kind: AIServices        │  │  kind: AIServices        │  │  kind: AIServices        │
+│  ┌────────────────────┐  │  │  ┌────────────────────┐  │  │  ┌────────────────────┐  │
+│  │ gpt-4.1-mini       │  │  │  │ gpt-4.1-mini       │  │  │  │ gpt-4.1-mini       │  │
+│  │ (GlobalStandard)   │  │  │  │ (GlobalStandard)   │  │  │  │ (GlobalStandard)   │  │
+│  └────────────────────┘  │  │  └────────────────────┘  │  │  └────────────────────┘  │
+└────────────┬─────────────┘  └────────────┬─────────────┘  └────────────┬─────────────┘
+             │                             │                             │
+             └─────────────┬───────────────┘─────────────────────────────┘
+                           │
+                  ┌────────▼────────┐
+                  │  Jupyter        │
+                  │  Notebook       │
+                  │  (Test Runner)  │
+                  └─────────────────┘
 ```
+
+## Resources Deployed Per Instance
+
+| Resource | Type | Purpose |
+|----------|------|---------|
+| AI Services account | `Microsoft.CognitiveServices/accounts` (kind: `AIServices`) | Hosts the OpenAI model |
+| Model deployment | `Microsoft.CognitiveServices/accounts/deployments` | GPT-4.1-mini (GlobalStandard) |
 
 ## Test Matrix
 
@@ -60,10 +58,7 @@ The Jupyter notebook runs a comprehensive test matrix covering both synchronous 
 ## Prerequisites
 
 - **Azure CLI** installed and authenticated (`az login`)
-- **Azure subscription** with Owner or Contributor permissions to create:
-  - Cognitive Services (AI Services) resources
-  - Machine Learning Services (Foundry Hub/Project) resources  
-  - Storage Accounts and Key Vaults
+- **Azure subscription** with permissions to create Cognitive Services (AI Services) resources
 - **Python 3.10+**
 - Sufficient quota for GPT-4.1-mini in Sweden Central
 
@@ -75,8 +70,7 @@ response-api-state/
 │   ├── main.bicep                      # Main Bicep template (subscription-scoped)
 │   ├── main.parameters.json            # Deployment parameters
 │   └── modules/
-│       └── foundry-instance.bicep       # Azure AI Foundry instance module
-│                                        # (AI Services + Hub + Project + Storage + KV)
+│       └── foundry-instance.bicep       # AI Services + model deployment module
 ├── test_response_api_stateless.ipynb    # Jupyter notebook with all tests
 ├── deploy.sh                           # Deployment script
 ├── env.example                         # Environment variable template
