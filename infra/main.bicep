@@ -13,7 +13,11 @@ param resourceGroupName string = 'rg-response-api-stateless-test'
 param tags object = {
   project: 'response-api-stateless-test'
   purpose: 'testing-response-api-state-across-foundry-instances'
+  SecurityControl: 'Ignore'
 }
+
+@description('Set to true if redeploying after a failed run left soft-deleted Key Vaults')
+param recoverKeyVault bool = false
 
 // Create the resource group
 resource rg 'Microsoft.Resources/resourceGroups@2024-03-01' = {
@@ -30,6 +34,7 @@ module foundry1 'modules/foundry-instance.bicep' = {
     name: 'fnd1-${uniqueSuffix}'
     location: location
     tags: union(tags, { instance: '1' })
+    recoverKeyVault: recoverKeyVault
   }
 }
 
@@ -40,6 +45,7 @@ module foundry2 'modules/foundry-instance.bicep' = {
     name: 'fnd2-${uniqueSuffix}'
     location: location
     tags: union(tags, { instance: '2' })
+    recoverKeyVault: recoverKeyVault
   }
 }
 
@@ -50,6 +56,7 @@ module foundry3 'modules/foundry-instance.bicep' = {
     name: 'fnd3-${uniqueSuffix}'
     location: location
     tags: union(tags, { instance: '3' })
+    recoverKeyVault: recoverKeyVault
   }
 }
 

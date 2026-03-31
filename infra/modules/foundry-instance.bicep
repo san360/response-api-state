@@ -27,6 +27,9 @@ param skuName string = 'GlobalStandard'
 @description('Deployment capacity (tokens per minute in thousands)')
 param deploymentCapacity int = 10
 
+@description('Set to true to recover soft-deleted Key Vaults with the same name')
+param recoverKeyVault bool = false
+
 @description('Tags for the resources')
 param tags object = {}
 
@@ -38,7 +41,7 @@ var storageNameCleaned = replace('st${name}', '-', '')
 resource storageAccount 'Microsoft.Storage/storageAccounts@2023-05-01' = {
   name: length(storageNameCleaned) > 24 ? substring(storageNameCleaned, 0, 24) : storageNameCleaned
   location: location
-  tags: tags
+  tags: union(tags, { SecurityControl: 'Ignore' })
   sku: {
     name: 'Standard_LRS'
   }
@@ -58,9 +61,9 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2023-05-01' = {
 resource keyVault 'Microsoft.KeyVault/vaults@2023-07-01' = {
   name: 'kv-${name}'
   location: location
-  tags: tags
+  tags: union(tags, { SecurityControl: 'Ignore' })
   properties: {
-    createMode: 'default'
+    createMode: recoverKeyVault ? 'recover' : 'default'
     enableRbacAuthorization: true
     enableSoftDelete: true
     softDeleteRetentionInDays: 7
@@ -79,7 +82,7 @@ resource keyVault 'Microsoft.KeyVault/vaults@2023-07-01' = {
 resource aiServices 'Microsoft.CognitiveServices/accounts@2024-10-01' = {
   name: 'ais-${name}'
   location: location
-  tags: tags
+  tags: union(tags, { SecurityControl: 'Ignore' })
   kind: 'AIServices'
   sku: {
     name: 'S0'
@@ -87,6 +90,7 @@ resource aiServices 'Microsoft.CognitiveServices/accounts@2024-10-01' = {
   properties: {
     customSubDomainName: 'ais-${name}'
     publicNetworkAccess: 'Enabled'
+    disableLocalAuth: false
   }
 }
 
@@ -115,7 +119,7 @@ resource modelDeployment 'Microsoft.CognitiveServices/accounts/deployments@2024-
 resource aiHub 'Microsoft.MachineLearningServices/workspaces@2024-10-01' = {
   name: 'aih-${name}'
   location: location
-  tags: tags
+  tags: union(tags, { SecurityControl: 'Ignore' })
   kind: 'hub'
   identity: {
     type: 'SystemAssigned'
@@ -152,7 +156,7 @@ resource aiHub 'Microsoft.MachineLearningServices/workspaces@2024-10-01' = {
 resource aiProject 'Microsoft.MachineLearningServices/workspaces@2024-10-01' = {
   name: 'aip-${name}'
   location: location
-  tags: tags
+  tags: union(tags, { SecurityControl: 'Ignore' })
   kind: 'project'
   identity: {
     type: 'SystemAssigned'
