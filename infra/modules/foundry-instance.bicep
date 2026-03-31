@@ -64,6 +64,26 @@ resource modelDeployment 'Microsoft.CognitiveServices/accounts/deployments@2024-
 }
 
 // ──────────────────────────────────────────────────────────────
+// Second model deployment (gpt-5-mini)
+// ──────────────────────────────────────────────────────────────
+resource modelDeployment2 'Microsoft.CognitiveServices/accounts/deployments@2024-10-01' = {
+  parent: aiServices
+  name: 'gpt-5-mini'
+  dependsOn: [modelDeployment]
+  sku: {
+    name: 'GlobalStandard'
+    capacity: 10
+  }
+  properties: {
+    model: {
+      format: 'OpenAI'
+      name: 'gpt-5-mini'
+      version: '2025-08-07'
+    }
+  }
+}
+
+// ──────────────────────────────────────────────────────────────
 // Outputs
 // ──────────────────────────────────────────────────────────────
 @description('The OpenAI-specific endpoint URL (used for Response API base_url)')

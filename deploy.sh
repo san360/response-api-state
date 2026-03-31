@@ -68,8 +68,9 @@ AZURE_OPENAI_API_KEY_2=${KEY2}
 AZURE_OPENAI_ENDPOINT_3=${INSTANCE3_ENDPOINT}
 AZURE_OPENAI_API_KEY_3=${KEY3}
 
-# Model deployment name (same across all instances)
+# Model deployment names (same across all instances)
 AZURE_OPENAI_DEPLOYMENT_NAME=gpt-4-1-mini
+AZURE_OPENAI_DEPLOYMENT_NAME_2=gpt-5-mini
 EOF
 
 echo ""
