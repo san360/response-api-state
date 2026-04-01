@@ -1,97 +1,221 @@
 <mxfile host="65bd71144e">
-    <diagram id="1sLr5eAl843UERDyWVyD" name="Response API — Cross-Instance Test">
-        <mxGraphModel dx="1100" dy="680" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="680" math="0" shadow="0">
+    <diagram id="1sLr5eAl843UERDyWVyD" name="Stateless vs Stateful API Routing">
+        <mxGraphModel dx="1200" dy="860" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="860" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
 
                 <!-- ── Title ────────────────────────────────────────── -->
-                <mxCell id="100" value="&lt;b&gt;Azure OpenAI Response API — Cross-Instance Architecture&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=16;fontColor=#1A1A2E;" vertex="1" parent="1">
-                    <mxGeometry x="200" y="20" width="560" height="40" as="geometry"/>
+                <mxCell id="100" value="&lt;b style=&quot;font-size:16px;&quot;&gt;Azure OpenAI — Stateless vs Stateful API Routing&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontColor=#1A1A2E;" vertex="1" parent="1">
+                    <mxGeometry x="250" y="15" width="560" height="35" as="geometry"/>
                 </mxCell>
 
-                <!-- ── Actor ────────────────────────────────────────── -->
+                <!-- ── Client ───────────────────────────────────────── -->
                 <mxCell id="9" value="Client" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fillColor=#0078D4;fontColor=#333333;strokeColor=#0078D4;fontSize=12;fontStyle=1;" vertex="1" parent="1">
-                    <mxGeometry x="80" y="270" width="40" height="60" as="geometry"/>
+                    <mxGeometry x="60" y="340" width="40" height="60" as="geometry"/>
                 </mxCell>
 
                 <!-- ── APIM Gateway ─────────────────────────────────── -->
                 <mxCell id="2" value="&lt;b&gt;API Management&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px;&quot;&gt;Gateway&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0078D4;fontColor=#FFFFFF;strokeColor=#005A9E;arcSize=12;shadow=1;fontSize=13;" vertex="1" parent="1">
-                    <mxGeometry x="280" y="265" width="160" height="70" as="geometry"/>
-                </mxCell>
-
-                <!-- ── Foundry Instances container ──────────────────── -->
-                <mxCell id="50" value="&lt;b&gt;Azure AI Foundry Instances&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px;color:#666;&quot;&gt;Sweden Central&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F2F1;strokeColor=#D2D0CE;dashed=1;dashPattern=5 5;verticalAlign=top;align=center;fontSize=12;fontColor=#323130;arcSize=8;spacingTop=8;" vertex="1" parent="1">
-                    <mxGeometry x="580" y="90" width="220" height="420" as="geometry"/>
-                </mxCell>
-
-                <!-- ── Foundry 1 ────────────────────────────────────── -->
-                <mxCell id="3" value="&lt;b&gt;Foundry Instance 1&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px;&quot;&gt;ais-fnd1-xxx&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#50E6FF;fontColor=#1A1A2E;strokeColor=#00B7C3;arcSize=14;shadow=1;fontSize=12;" vertex="1" parent="1">
-                    <mxGeometry x="620" y="150" width="150" height="60" as="geometry"/>
-                </mxCell>
-
-                <!-- ── Foundry 2 ────────────────────────────────────── -->
-                <mxCell id="4" value="&lt;b&gt;Foundry Instance 2&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px;&quot;&gt;ais-fnd2-xxx&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#50E6FF;fontColor=#1A1A2E;strokeColor=#00B7C3;arcSize=14;shadow=1;fontSize=12;" vertex="1" parent="1">
-                    <mxGeometry x="620" y="270" width="150" height="60" as="geometry"/>
-                </mxCell>
-
-                <!-- ── Foundry 3 ────────────────────────────────────── -->
-                <mxCell id="5" value="&lt;b&gt;Foundry Instance 3&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px;&quot;&gt;ais-fnd3-xxx&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#50E6FF;fontColor=#1A1A2E;strokeColor=#00B7C3;arcSize=14;shadow=1;fontSize=12;" vertex="1" parent="1">
-                    <mxGeometry x="620" y="390" width="150" height="60" as="geometry"/>
+                    <mxGeometry x="260" y="335" width="160" height="70" as="geometry"/>
                 </mxCell>
 
                 <!-- ── Edge: Client → APIM ──────────────────────────── -->
                 <mxCell id="10" style="edgeStyle=orthogonalEdgeStyle;html=1;rounded=1;strokeColor=#0078D4;strokeWidth=2;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="9" target="2">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="10L" value="&lt;font style=&quot;font-size:10px;&quot;&gt;POST /responses&lt;br&gt;GET /responses/{id}&lt;/font&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontColor=#0078D4;labelBackgroundColor=#FFFFFF;" vertex="1" connectable="0" parent="10">
-                    <mxGeometry x="-0.1" relative="1" as="geometry">
-                        <mxPoint y="-20" as="offset"/>
+
+                <!-- ══════════════════════════════════════════════════ -->
+                <!-- ══  SECTION A: STATELESS — Chat/Completions     ══ -->
+                <!-- ══════════════════════════════════════════════════ -->
+
+                <!-- Section A label -->
+                <mxCell id="200" value="&lt;b style=&quot;font-size:13px;color:#107C10;&quot;&gt;A. Stateless — POST /chat/completions&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px;color:#444;&quot;&gt;No server-side state. Can route to &lt;b&gt;any&lt;/b&gt; instance.&lt;/font&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="520" y="65" width="360" height="40" as="geometry"/>
+                </mxCell>
+
+                <!-- Foundry Instances container (stateless) -->
+                <mxCell id="50" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E6F4EA;strokeColor=#107C10;dashed=1;dashPattern=5 5;verticalAlign=top;align=center;fontSize=12;fontColor=#323130;arcSize=6;" vertex="1" parent="1">
+                    <mxGeometry x="520" y="105" width="480" height="200" as="geometry"/>
+                </mxCell>
+
+                <!-- Foundry 1 (stateless) -->
+                <mxCell id="3" value="&lt;b&gt;Foundry 1&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px;&quot;&gt;ais-fnd1&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#50E6FF;fontColor=#1A1A2E;strokeColor=#00B7C3;arcSize=14;shadow=1;fontSize=12;" vertex="1" parent="1">
+                    <mxGeometry x="540" y="140" width="130" height="55" as="geometry"/>
+                </mxCell>
+
+                <!-- Foundry 2 (stateless) -->
+                <mxCell id="4" value="&lt;b&gt;Foundry 2&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px;&quot;&gt;ais-fnd2&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#50E6FF;fontColor=#1A1A2E;strokeColor=#00B7C3;arcSize=14;shadow=1;fontSize=12;" vertex="1" parent="1">
+                    <mxGeometry x="695" y="140" width="130" height="55" as="geometry"/>
+                </mxCell>
+
+                <!-- Foundry 3 (stateless) -->
+                <mxCell id="5" value="&lt;b&gt;Foundry 3&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px;&quot;&gt;ais-fnd3&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#50E6FF;fontColor=#1A1A2E;strokeColor=#00B7C3;arcSize=14;shadow=1;fontSize=12;" vertex="1" parent="1">
+                    <mxGeometry x="850" y="140" width="130" height="55" as="geometry"/>
+                </mxCell>
+
+                <!-- Green tick / any instance note -->
+                <mxCell id="201" value="&lt;font style=&quot;font-size:11px;color:#107C10;&quot;&gt;✅ Round-robin / load-balance freely — no affinity needed&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="570" y="225" width="390" height="30" as="geometry"/>
+                </mxCell>
+
+                <!-- Edge: APIM → stateless section (fan-out) -->
+                <mxCell id="6" style="edgeStyle=orthogonalEdgeStyle;html=1;rounded=1;strokeColor=#107C10;strokeWidth=2;exitX=1;exitY=0.25;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="2" target="3">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="480" y="353"/>
+                            <mxPoint x="480" y="168"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="6L" value="&lt;font style=&quot;font-size:9px;color:#107C10;&quot;&gt;/chat/completions&lt;/font&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=#FFFFFF;" vertex="1" connectable="0" parent="6">
+                    <mxGeometry x="-0.3" relative="1" as="geometry">
+                        <mxPoint y="-12" as="offset"/>
                     </mxGeometry>
                 </mxCell>
 
-                <!-- ── Edge: APIM → Foundry 1 ───────────────────────── -->
-                <mxCell id="6" style="edgeStyle=orthogonalEdgeStyle;html=1;rounded=1;strokeColor=#005A9E;strokeWidth=2;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=1;exitY=0.25;exitDx=0;exitDy=0;" edge="1" parent="1" source="2" target="3">
-                    <mxGeometry relative="1" as="geometry"/>
+                <mxCell id="7" style="edgeStyle=orthogonalEdgeStyle;html=1;rounded=1;strokeColor=#107C10;strokeWidth=2;dashed=1;dashPattern=8 4;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="2" target="4">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="480" y="370"/>
+                            <mxPoint x="480" y="168"/>
+                        </Array>
+                    </mxGeometry>
                 </mxCell>
-                <mxCell id="6L" value="&lt;font style=&quot;font-size:9px;&quot;&gt;route&lt;/font&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontColor=#005A9E;labelBackgroundColor=#FFFFFF;" vertex="1" connectable="0" parent="6">
+
+                <mxCell id="8" style="edgeStyle=orthogonalEdgeStyle;html=1;rounded=1;strokeColor=#107C10;strokeWidth=2;dashed=1;dashPattern=8 4;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="2" target="5">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="480" y="370"/>
+                            <mxPoint x="480" y="168"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+
+                <!-- ══════════════════════════════════════════════════ -->
+                <!-- ══  SECTION B: STATEFUL — Response API          ══ -->
+                <!-- ══════════════════════════════════════════════════ -->
+
+                <!-- Section B label -->
+                <mxCell id="300" value="&lt;b style=&quot;font-size:13px;color:#D83B01;&quot;&gt;B. Stateful — GET /responses/{response_id}&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px;color:#444;&quot;&gt;response_id is &lt;b&gt;instance-bound&lt;/b&gt;. Must route to the &lt;b&gt;same&lt;/b&gt; Foundry instance.&lt;/font&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="520" y="350" width="470" height="45" as="geometry"/>
+                </mxCell>
+
+                <!-- Foundry Instances container (stateful) -->
+                <mxCell id="51" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEF0E5;strokeColor=#D83B01;dashed=1;dashPattern=5 5;verticalAlign=top;align=center;fontSize=12;fontColor=#323130;arcSize=6;" vertex="1" parent="1">
+                    <mxGeometry x="520" y="400" width="480" height="250" as="geometry"/>
+                </mxCell>
+
+                <!-- Foundry 1 (stateful — the pinned one) -->
+                <mxCell id="31" value="&lt;b&gt;Foundry 1&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px;&quot;&gt;ais-fnd1&lt;/font&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px;color:#D83B01;&quot;&gt;⬤ response_id lives here&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#50E6FF;fontColor=#1A1A2E;strokeColor=#D83B01;strokeWidth=3;arcSize=14;shadow=1;fontSize=12;" vertex="1" parent="1">
+                    <mxGeometry x="540" y="430" width="160" height="65" as="geometry"/>
+                </mxCell>
+
+                <!-- Foundry 2 (stateful — cannot retrieve) -->
+                <mxCell id="41" value="&lt;b&gt;Foundry 2&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px;&quot;&gt;ais-fnd2&lt;/font&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px;color:#A4262C;&quot;&gt;❌ 404 Not Found&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F2F1;fontColor=#1A1A2E;strokeColor=#D2D0CE;arcSize=14;shadow=0;fontSize=12;opacity=70;" vertex="1" parent="1">
+                    <mxGeometry x="540" y="540" width="160" height="65" as="geometry"/>
+                </mxCell>
+
+                <!-- Foundry 3 (stateful — cannot retrieve) -->
+                <mxCell id="52" value="&lt;b&gt;Foundry 3&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px;&quot;&gt;ais-fnd3&lt;/font&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px;color:#A4262C;&quot;&gt;❌ 404 Not Found&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F2F1;fontColor=#1A1A2E;strokeColor=#D2D0CE;arcSize=14;shadow=0;fontSize=12;opacity=70;" vertex="1" parent="1">
+                    <mxGeometry x="540" y="630" width="160" height="65" as="geometry"/>
+                </mxCell>
+
+                <!-- Pinned arrow: APIM → Foundry 1 (stateful) -->
+                <mxCell id="11" style="edgeStyle=orthogonalEdgeStyle;html=1;rounded=1;strokeColor=#D83B01;strokeWidth=3;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=1;exitY=0.75;exitDx=0;exitDy=0;" edge="1" parent="1" source="2" target="31">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="470" y="388"/>
+                            <mxPoint x="470" y="463"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="11L" value="&lt;font style=&quot;font-size:9px;color:#D83B01;&quot;&gt;&lt;b&gt;MUST&lt;/b&gt; route to&lt;br&gt;same instance&lt;/font&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=#FFFFFF;" vertex="1" connectable="0" parent="11">
                     <mxGeometry x="-0.2" relative="1" as="geometry">
-                        <mxPoint y="-10" as="offset"/>
+                        <mxPoint x="-10" y="-2" as="offset"/>
                     </mxGeometry>
                 </mxCell>
 
-                <!-- ── Edge: APIM → Foundry 2 ───────────────────────── -->
-                <mxCell id="7" style="edgeStyle=orthogonalEdgeStyle;html=1;rounded=1;strokeColor=#005A9E;strokeWidth=2;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="2" target="4">
-                    <mxGeometry relative="1" as="geometry"/>
+                <!-- Crossed-out arrows to Foundry 2 & 3 -->
+                <mxCell id="12" style="edgeStyle=orthogonalEdgeStyle;html=1;rounded=1;strokeColor=#A4262C;strokeWidth=1;dashed=1;dashPattern=4 4;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=1;exitY=0.75;exitDx=0;exitDy=0;" edge="1" parent="1" source="2" target="41">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="460" y="388"/>
+                            <mxPoint x="460" y="573"/>
+                        </Array>
+                    </mxGeometry>
                 </mxCell>
-                <mxCell id="7L" value="&lt;font style=&quot;font-size:9px;&quot;&gt;route&lt;/font&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontColor=#005A9E;labelBackgroundColor=#FFFFFF;" vertex="1" connectable="0" parent="7">
-                    <mxGeometry x="-0.2" relative="1" as="geometry">
-                        <mxPoint y="-10" as="offset"/>
+                <mxCell id="12L" value="&lt;font style=&quot;font-size:8px;color:#A4262C;&quot;&gt;✗&lt;/font&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=#FFFFFF;fontSize=14;" vertex="1" connectable="0" parent="12">
+                    <mxGeometry x="0.4" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
                     </mxGeometry>
                 </mxCell>
 
-                <!-- ── Edge: APIM → Foundry 3 ───────────────────────── -->
-                <mxCell id="8" style="edgeStyle=orthogonalEdgeStyle;html=1;rounded=1;strokeColor=#005A9E;strokeWidth=2;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=1;exitY=0.75;exitDx=0;exitDy=0;" edge="1" parent="1" source="2" target="5">
-                    <mxGeometry relative="1" as="geometry"/>
+                <mxCell id="13" style="edgeStyle=orthogonalEdgeStyle;html=1;rounded=1;strokeColor=#A4262C;strokeWidth=1;dashed=1;dashPattern=4 4;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=1;exitY=0.75;exitDx=0;exitDy=0;" edge="1" parent="1" source="2" target="52">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="450" y="388"/>
+                            <mxPoint x="450" y="663"/>
+                        </Array>
+                    </mxGeometry>
                 </mxCell>
-                <mxCell id="8L" value="&lt;font style=&quot;font-size:9px;&quot;&gt;route&lt;/font&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontColor=#005A9E;labelBackgroundColor=#FFFFFF;" vertex="1" connectable="0" parent="8">
-                    <mxGeometry x="-0.2" relative="1" as="geometry">
-                        <mxPoint y="-10" as="offset"/>
+                <mxCell id="13L" value="&lt;font style=&quot;font-size:8px;color:#A4262C;&quot;&gt;✗&lt;/font&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=#FFFFFF;fontSize=14;" vertex="1" connectable="0" parent="13">
+                    <mxGeometry x="0.4" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
                     </mxGeometry>
                 </mxCell>
 
-                <!-- ── Legend box ────────────────────────────────────── -->
-                <mxCell id="60" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#D2D0CE;arcSize=10;shadow=1;" vertex="1" parent="1">
-                    <mxGeometry x="70" y="430" width="310" height="100" as="geometry"/>
+                <!-- Flow annotation in stateful section -->
+                <mxCell id="301" value="&lt;font style=&quot;font-size:10px;&quot;&gt;&lt;b&gt;Step 1:&lt;/b&gt; POST /responses → Foundry 1 → returns &lt;b&gt;response_id&lt;/b&gt;&lt;br&gt;&lt;b&gt;Step 2:&lt;/b&gt; GET /responses/{id} → &lt;b&gt;must go to Foundry 1&lt;/b&gt;&lt;/font&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontColor=#333;" vertex="1" parent="1">
+                    <mxGeometry x="740" y="445" width="240" height="50" as="geometry"/>
                 </mxCell>
-                <mxCell id="61" value="&lt;b&gt;Key Question&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#1A1A2E;" vertex="1" parent="1">
-                    <mxGeometry x="85" y="435" width="120" height="25" as="geometry"/>
+
+                <!-- ══════════════════════════════════════════════════ -->
+                <!-- ══  LEGEND                                      ══ -->
+                <!-- ══════════════════════════════════════════════════ -->
+                <mxCell id="60" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#D2D0CE;arcSize=8;shadow=1;" vertex="1" parent="1">
+                    <mxGeometry x="30" y="530" width="350" height="160" as="geometry"/>
                 </mxCell>
-                <mxCell id="62" value="&lt;font style=&quot;font-size:10px;&quot;&gt;Is &lt;b&gt;response_id&lt;/b&gt; from Instance 1&lt;br&gt;retrievable on Instance 2 &amp;amp; 3?&lt;/font&gt;" style="text;html=1;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontColor=#333333;" vertex="1" parent="1">
-                    <mxGeometry x="85" y="458" width="200" height="35" as="geometry"/>
+                <mxCell id="61" value="&lt;b style=&quot;font-size:12px;&quot;&gt;Legend&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontColor=#1A1A2E;" vertex="1" parent="1">
+                    <mxGeometry x="45" y="535" width="80" height="25" as="geometry"/>
                 </mxCell>
-                <mxCell id="63" value="&lt;font style=&quot;font-size:10px;color:#005A9E;&quot;&gt;POST /openai/v1/responses&lt;br&gt;GET&amp;nbsp; /openai/v1/responses/{id}&lt;/font&gt;" style="text;html=1;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontFamily=Consolas;" vertex="1" parent="1">
-                    <mxGeometry x="85" y="495" width="280" height="30" as="geometry"/>
+
+                <!-- Legend: green line -->
+                <mxCell id="70" value="" style="endArrow=classic;html=1;strokeColor=#107C10;strokeWidth=2;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="50" y="580" as="sourcePoint"/>
+                        <mxPoint x="100" y="580" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="71" value="&lt;font style=&quot;font-size:10px;&quot;&gt;&lt;b&gt;Stateless&lt;/b&gt; — POST /chat/completions&lt;br&gt;Route to any instance&lt;/font&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontColor=#107C10;" vertex="1" parent="1">
+                    <mxGeometry x="110" y="568" width="250" height="28" as="geometry"/>
+                </mxCell>
+
+                <!-- Legend: orange line -->
+                <mxCell id="72" value="" style="endArrow=classic;html=1;strokeColor=#D83B01;strokeWidth=3;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="50" y="618" as="sourcePoint"/>
+                        <mxPoint x="100" y="618" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="73" value="&lt;font style=&quot;font-size:10px;&quot;&gt;&lt;b&gt;Stateful&lt;/b&gt; — GET /responses/{id}&lt;br&gt;Must route to originating instance&lt;/font&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontColor=#D83B01;" vertex="1" parent="1">
+                    <mxGeometry x="110" y="605" width="250" height="28" as="geometry"/>
+                </mxCell>
+
+                <!-- Legend: red dashed line -->
+                <mxCell id="74" value="" style="endArrow=classic;html=1;strokeColor=#A4262C;strokeWidth=1;dashed=1;dashPattern=4 4;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="50" y="655" as="sourcePoint"/>
+                        <mxPoint x="100" y="655" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="75" value="&lt;font style=&quot;font-size:10px;&quot;&gt;&lt;b&gt;Blocked&lt;/b&gt; — Wrong instance → 404&lt;/font&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontColor=#A4262C;" vertex="1" parent="1">
+                    <mxGeometry x="110" y="643" width="250" height="25" as="geometry"/>
+                </mxCell>
+
+                <!-- Region label -->
+                <mxCell id="400" value="&lt;font style=&quot;font-size:10px;color:#666;&quot;&gt;Region: Sweden Central&lt;/font&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="520" y="310" width="160" height="25" as="geometry"/>
                 </mxCell>
 
             </root>
