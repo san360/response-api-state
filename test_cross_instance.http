@@ -1,0 +1,45 @@
+### ==========================================================================
+### Azure OpenAI Response API — Cross-Instance State Test (.http)
+###
+### Uses the VS Code REST Client extension (humao.rest-client).
+###
+### Flow:
+###   1. POST /openai/v1/responses  → Instance 1: Create response, capture ID
+###   2. GET  /openai/v1/responses/{{responseId}} → Instance 2: Retrieve by ID
+### ==========================================================================
+
+### ── Variables ────────────────────────────────────────────────────────────
+
+@instance1 = {{$dotenv AZURE_OPENAI_ENDPOINT_1}}
+@apiKey1   = {{$dotenv AZURE_OPENAI_API_KEY_1}}
+
+@instance2 = {{$dotenv AZURE_OPENAI_ENDPOINT_2}}
+@apiKey2   = {{$dotenv AZURE_OPENAI_API_KEY_2}}
+
+@model = {{$dotenv AZURE_OPENAI_DEPLOYMENT_NAME}}
+
+
+### ==========================================================================
+### STEP 1 — Create a response on Instance 1
+### ==========================================================================
+
+# @name createResponse
+POST {{instance1}}/openai/v1/responses
+Content-Type: application/json
+api-key: {{apiKey1}}
+
+{
+    "model": "{{model}}",
+    "input": "What is the capital of France? Answer in one word."
+}
+
+
+### ==========================================================================
+### STEP 2 — Retrieve the response from Instance 2 using the captured ID
+### ==========================================================================
+
+@responseId = {{createResponse.response.body.id}}
+
+# @name retrieveResponse
+GET {{instance2}}/openai/v1/responses/{{responseId}}
+api-key: {{apiKey2}}
