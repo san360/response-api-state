@@ -1,14 +1,18 @@
-# Azure OpenAI Response API — Stateless Cross-Instance Test (Azure AI Services)
+# Azure OpenAI Response API — Stateless Cross-Instance Test (Azure AI Services & Azure OpenAI)
 
 ## Overview
 
-This project tests whether the **Azure OpenAI Response API** state (i.e. `response_id` and `previous_response_id`) is portable across **different Azure AI Services instances**. It answers the question:
+This project tests whether the **Azure OpenAI Response API** state (i.e. `response_id` and `previous_response_id`) is portable across **different Azure instances**. It answers the question:
 
 > **If I create a response on Instance A, can I retrieve or chain that response from Instance B or C?**
 
-Three **Azure AI Services** accounts (kind: `AIServices`) are deployed in **Sweden Central**, each with a **GPT-4.1-mini** model deployment.
+Two resource kinds are tested:
+- **AI Services** (kind: `AIServices`) — 3 instances (Foundry resources)
+- **Azure OpenAI** (kind: `OpenAI`) — 3 instances (pure OpenAI resources)
 
-The Jupyter notebook runs a comprehensive test matrix covering both synchronous and background (`background=True`) modes.
+All 6 resources are deployed in **Sweden Central**, each with **GPT-4.1-mini** and **GPT-5-mini** model deployments.
+
+The Jupyter notebook runs a comprehensive test matrix covering both synchronous and background (`background=True`) modes for each resource kind.
 
 ## Architecture
 
@@ -16,11 +20,22 @@ The Jupyter notebook runs a comprehensive test matrix covering both synchronous 
 ┌──────────────────────────┐  ┌──────────────────────────┐  ┌──────────────────────────┐
 │  AI Services Instance 1  │  │  AI Services Instance 2  │  │  AI Services Instance 3  │
 │  (Sweden Central)        │  │  (Sweden Central)        │  │  (Sweden Central)        │
-│                          │  │                          │  │                          │
 │  kind: AIServices        │  │  kind: AIServices        │  │  kind: AIServices        │
 │  ┌────────────────────┐  │  │  ┌────────────────────┐  │  │  ┌────────────────────┐  │
 │  │ gpt-4.1-mini       │  │  │  │ gpt-4.1-mini       │  │  │  │ gpt-4.1-mini       │  │
-│  │ (GlobalStandard)   │  │  │  │ (GlobalStandard)   │  │  │  │ (GlobalStandard)   │  │
+│  │ gpt-5-mini         │  │  │  │ gpt-5-mini         │  │  │  │ gpt-5-mini         │  │
+│  └────────────────────┘  │  │  └────────────────────┘  │  │  └────────────────────┘  │
+└────────────┬─────────────┘  └────────────┬─────────────┘  └────────────┬─────────────┘
+             │                             │                             │
+             └─────────────┬───────────────┘─────────────────────────────┘
+                           │
+┌──────────────────────────┐  ┌──────────────────────────┐  ┌──────────────────────────┐
+│  Azure OpenAI Instance 1 │  │  Azure OpenAI Instance 2 │  │  Azure OpenAI Instance 3 │
+│  (Sweden Central)        │  │  (Sweden Central)        │  │  (Sweden Central)        │
+│  kind: OpenAI            │  │  kind: OpenAI            │  │  kind: OpenAI            │
+│  ┌────────────────────┐  │  │  ┌────────────────────┐  │  │  ┌────────────────────┐  │
+│  │ gpt-4.1-mini       │  │  │  │ gpt-4.1-mini       │  │  │  │ gpt-4.1-mini       │  │
+│  │ gpt-5-mini         │  │  │  │ gpt-5-mini         │  │  │  │ gpt-5-mini         │  │
 │  └────────────────────┘  │  │  └────────────────────┘  │  │  └────────────────────┘  │
 └────────────┬─────────────┘  └────────────┬─────────────┘  └────────────┬─────────────┘
              │                             │                             │
@@ -38,9 +53,16 @@ The Jupyter notebook runs a comprehensive test matrix covering both synchronous 
 | Resource | Type | Purpose |
 |----------|------|---------|
 | AI Services account | `Microsoft.CognitiveServices/accounts` (kind: `AIServices`) | Hosts the OpenAI model |
-| Model deployment | `Microsoft.CognitiveServices/accounts/deployments` | GPT-4.1-mini (GlobalStandard) |
+| Model deployment | `Microsoft.CognitiveServices/accounts/deployments` | GPT-4.1-mini + GPT-5-mini (GlobalStandard) |
+
+| Resource | Type | Purpose |
+|----------|------|---------|
+| Azure OpenAI account | `Microsoft.CognitiveServices/accounts` (kind: `OpenAI`) | Hosts the OpenAI model |
+| Model deployment | `Microsoft.CognitiveServices/accounts/deployments` | GPT-4.1-mini + GPT-5-mini (GlobalStandard) |
 
 ## Test Matrix
+
+### Part A: AI Services (Foundry) Instances
 
 | # | Test | Mode | Description |
 |---|------|------|-------------|
@@ -54,6 +76,26 @@ The Jupyter notebook runs a comprehensive test matrix covering both synchronous 
 | 5b | Background Cross-Instance Retrieve | Background | Create with `background=True` on Instance 1, retrieve from Instance 3 |
 | 6a | Background Cross-Instance Chaining | Background | Create with `background=True` on Instance 1, chain from Instance 2 |
 | 6b | Background Cross-Instance Chaining | Background | Create with `background=True` on Instance 1, chain from Instance 3 |
+
+### Part B: Azure OpenAI (kind: OpenAI) Instances
+
+| # | Test | Mode | Description |
+|---|------|------|-------------|
+| OAI-1 | Baseline | Sync | Create on OAI Instance 1, retrieve from OAI Instance 1 |
+| OAI-1b | Cross-Model Retrieve | Sync | Create with gpt-4.1-mini, retrieve using gpt-5-mini (same OAI Instance 1) |
+| OAI-1c | Cross-Model Chaining | Sync | Create with gpt-4.1-mini, chain with gpt-5-mini (same OAI Instance 1) |
+| OAI-2a | Cross-Instance Retrieve | Sync | Create on OAI Instance 1, retrieve from OAI Instance 2 |
+| OAI-2b | Cross-Instance Retrieve | Sync | Create on OAI Instance 1, retrieve from OAI Instance 3 |
+| OAI-3a | Cross-Instance Chaining | Sync | Create on OAI Instance 1, chain from OAI Instance 2 |
+| OAI-3b | Cross-Instance Chaining | Sync | Create on OAI Instance 1, chain from OAI Instance 3 |
+| OAI-4 | Background Baseline | Background | Create with `background=True` on OAI Instance 1, poll & retrieve |
+| OAI-4b | Background Retrieve | Background | Retrieve background response from OAI Instance 1 |
+| OAI-4c | Background Cross-Model Retrieve | Background | Retrieve background response using gpt-5-mini on OAI Instance 1 |
+| OAI-4d | Background Cross-Model Chaining | Background | Chain with gpt-5-mini using background ID on OAI Instance 1 |
+| OAI-5a | Background Cross-Instance Retrieve | Background | `background=True` on OAI Instance 1, retrieve from OAI Instance 2 |
+| OAI-5b | Background Cross-Instance Retrieve | Background | `background=True` on OAI Instance 1, retrieve from OAI Instance 3 |
+| OAI-6a | Background Cross-Instance Chaining | Background | `background=True` on OAI Instance 1, chain from OAI Instance 2 |
+| OAI-6b | Background Cross-Instance Chaining | Background | `background=True` on OAI Instance 1, chain from OAI Instance 3 |
 
 ## Prerequisites
 
@@ -70,8 +112,10 @@ response-api-state/
 │   ├── main.bicep                      # Main Bicep template (subscription-scoped)
 │   ├── main.parameters.json            # Deployment parameters
 │   └── modules/
-│       └── foundry-instance.bicep       # AI Services + model deployment module
+│       ├── foundry-instance.bicep      # AI Services + model deployment module
+│       └── openai-instance.bicep       # Azure OpenAI + model deployment module
 ├── test_response_api_stateless.ipynb    # Jupyter notebook with all tests
+├── test_cross_instance.http            # REST Client tests (.http)
 ├── deploy.sh                           # Deployment script
 ├── env.example                         # Environment variable template
 ├── .env                                # Actual environment variables (git-ignored)
@@ -200,26 +244,35 @@ The Foundry Hub and Project are **organizational/governance constructs** — the
 
 Based on Azure's architecture, each Azure AI Foundry instance maintains **its own response storage** via its underlying AI Services account. Therefore:
 
+### AI Services (kind: AIServices)
 - **Test 1** (same-instance baseline) → **PASS**
 - **Tests 2–3** (cross-instance retrieve/chain) → **Expected to FAIL** (response not found on different resource)
 - **Test 4** (background baseline) → **PASS**
 - **Tests 5–6** (background cross-instance) → **Expected to FAIL** (same reason)
 
-If all tests pass, it would indicate that Azure shares response state across AI Services accounts in the same region — which would be a significant finding.
+### Azure OpenAI (kind: OpenAI)
+- **OAI-1** (same-instance baseline) → **PASS**
+- **OAI-2–3** (cross-instance retrieve/chain) → **Expected to FAIL** (response not found on different resource)
+- **OAI-4** (background baseline) → **PASS**
+- **OAI-5–6** (background cross-instance) → **Expected to FAIL** (same reason)
 
-## Resources Deployed Per Instance
+If all tests pass, it would indicate that Azure shares response state across accounts in the same region — which would be a significant finding.
 
-Each of the 3 Foundry instances creates:
+## Resources Deployed Per Instance (Detail)
+
+Each of the 3 AI Services (Foundry) instances creates:
 
 | Resource | Type | Purpose |
 |----------|------|--------|
-| AI Services | `Microsoft.CognitiveServices/accounts` (kind: `AIServices`) | Hosts the GPT-4.1-mini model deployment; provides the OpenAI endpoint (`*.openai.azure.com`) |
-| Model Deployment | `Microsoft.CognitiveServices/accounts/deployments` | GPT-4.1-mini with GlobalStandard SKU |
-| Foundry Hub | `Microsoft.MachineLearningServices/workspaces` (kind: `hub`) | Organizational container for AI projects |
-| Foundry Project | `Microsoft.MachineLearningServices/workspaces` (kind: `project`) | Scoped workspace within the hub |
-| AI Services Connection | `Microsoft.MachineLearningServices/workspaces/connections` | Links the Hub to the AI Services account |
-| Storage Account | `Microsoft.Storage/storageAccounts` | Required dependency for the Hub |
-| Key Vault | `Microsoft.KeyVault/vaults` | Required dependency for the Hub |
+| AI Services | `Microsoft.CognitiveServices/accounts` (kind: `AIServices`) | Hosts the GPT-4.1-mini + GPT-5-mini model deployments; provides the OpenAI endpoint (`*.openai.azure.com`) |
+| Model Deployments | `Microsoft.CognitiveServices/accounts/deployments` | GPT-4.1-mini + GPT-5-mini with GlobalStandard SKU |
+
+Each of the 3 Azure OpenAI instances creates:
+
+| Resource | Type | Purpose |
+|----------|------|--------|
+| Azure OpenAI | `Microsoft.CognitiveServices/accounts` (kind: `OpenAI`) | Hosts the GPT-4.1-mini + GPT-5-mini model deployments; provides the OpenAI endpoint (`*.openai.azure.com`) |
+| Model Deployments | `Microsoft.CognitiveServices/accounts/deployments` | GPT-4.1-mini + GPT-5-mini with GlobalStandard SKU |
 
 ## Cleanup
 

@@ -3,12 +3,16 @@
 ###
 ### Uses the VS Code REST Client extension (humao.rest-client).
 ###
-### Flow:
+### Part A: AI Services (Foundry) Instances
 ###   1. POST /openai/v1/responses  → Instance 1: Create response, capture ID
 ###   2. GET  /openai/v1/responses/{{responseId}} → Instance 2: Retrieve by ID
+###
+### Part B: Azure OpenAI (kind: OpenAI) Instances
+###   3. POST /openai/v1/responses  → OpenAI 1: Create response, capture ID
+###   4. GET  /openai/v1/responses/{{oaiResponseId}} → OpenAI 2: Retrieve by ID
 ### ==========================================================================
 
-### ── Variables ────────────────────────────────────────────────────────────
+### ── Variables (AI Services / Foundry) ────────────────────────────────
 
 @instance1 = {{$dotenv AZURE_OPENAI_ENDPOINT_1}}
 @apiKey1   = {{$dotenv AZURE_OPENAI_API_KEY_1}}
@@ -18,9 +22,24 @@
 
 @model = {{$dotenv AZURE_OPENAI_DEPLOYMENT_NAME}}
 
+### ── Variables (Azure OpenAI) ─────────────────────────────────────────
+
+@oaiInstance1 = {{$dotenv AZURE_OAI_ENDPOINT_1}}
+@oaiApiKey1   = {{$dotenv AZURE_OAI_API_KEY_1}}
+
+@oaiInstance2 = {{$dotenv AZURE_OAI_ENDPOINT_2}}
+@oaiApiKey2   = {{$dotenv AZURE_OAI_API_KEY_2}}
+
+@oaiInstance3 = {{$dotenv AZURE_OAI_ENDPOINT_3}}
+@oaiApiKey3   = {{$dotenv AZURE_OAI_API_KEY_3}}
+
 
 ### ==========================================================================
-### STEP 1 — Create a response on Instance 1
+### PART A: AI Services (Foundry) Instances
+### ==========================================================================
+
+### ==========================================================================
+### STEP 1 — Create a response on AI Services Instance 1
 ### ==========================================================================
 
 # @name createResponse
@@ -35,7 +54,7 @@ api-key: {{apiKey1}}
 
 
 ### ==========================================================================
-### STEP 2 — Retrieve the response from Instance 2 using the captured ID
+### STEP 2 — Retrieve the response from AI Services Instance 2 using the captured ID
 ### ==========================================================================
 
 @responseId = {{createResponse.response.body.id}}
@@ -43,3 +62,42 @@ api-key: {{apiKey1}}
 # @name retrieveResponse
 GET {{instance2}}/openai/v1/responses/{{responseId}}
 api-key: {{apiKey2}}
+
+
+### ==========================================================================
+### PART B: Azure OpenAI (kind: OpenAI) Instances
+### ==========================================================================
+
+### ==========================================================================
+### STEP 3 — Create a response on Azure OpenAI Instance 1
+### ==========================================================================
+
+# @name createOaiResponse
+POST {{oaiInstance1}}/openai/v1/responses
+Content-Type: application/json
+api-key: {{oaiApiKey1}}
+
+{
+    "model": "{{model}}",
+    "input": "What is the capital of France? Answer in one word."
+}
+
+
+### ==========================================================================
+### STEP 4 — Retrieve the response from Azure OpenAI Instance 2 using the captured ID
+### ==========================================================================
+
+@oaiResponseId = {{createOaiResponse.response.body.id}}
+
+# @name retrieveOaiResponse2
+GET {{oaiInstance2}}/openai/v1/responses/{{oaiResponseId}}
+api-key: {{oaiApiKey2}}
+
+
+### ==========================================================================
+### STEP 5 — Retrieve the response from Azure OpenAI Instance 3 using the captured ID
+### ==========================================================================
+
+# @name retrieveOaiResponse3
+GET {{oaiInstance3}}/openai/v1/responses/{{oaiResponseId}}
+api-key: {{oaiApiKey3}}
